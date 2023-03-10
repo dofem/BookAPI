@@ -15,20 +15,20 @@ namespace BookAPI.Service.Implementation
         public PublisherRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            
+
         }
 
         public async Task<IEnumerable<Publisher>> GetAllAsync()
         {
             return await _dbContext.Publishers.ToListAsync();
-            
+
         }
 
         public async Task<Publisher> GetByIdAsync(int id)
         {
-            var publisher =  await _dbContext.Publishers.FindAsync(id);
+            var publisher = await _dbContext.Publishers.FindAsync(id);
             return publisher;
-        
+
         }
 
         public async Task AddAsync(Publisher entity)
@@ -37,25 +37,9 @@ namespace BookAPI.Service.Implementation
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Author>> GetAuthorsAttachedToPublisher(int id)
+        public async  Task<IEnumerable<Author>> GetAuthorsAttachedToPublisher(int publisherId)
         {
-            var publisher = _dbContext.Publishers
-                .Include(p => p.Books)
-                    .ThenInclude(b => b.Author)
-                .SingleOrDefault(p => p.Id == id);
-
-            if (publisher == null)
-            {
-                throw new ArgumentException("Publisher not found");
-            }
-
-            var authors = publisher.Books.Select(b => b.Author);
-
-            return authors.ToList();
-
+            return _dbContext.Authors.Where(a => a.PublisherId == publisherId).ToList();
         }
-
-
     }
-
 }

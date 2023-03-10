@@ -34,7 +34,7 @@ namespace BookAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PublisherId")
+                    b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -58,7 +58,7 @@ namespace BookAPI.Migrations
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PublisherId")
+                    b.Property<int?>("PublisherId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -97,9 +97,13 @@ namespace BookAPI.Migrations
 
             modelBuilder.Entity("BookAPI.Model.Author", b =>
                 {
-                    b.HasOne("BookAPI.Model.Publisher", null)
+                    b.HasOne("BookAPI.Model.Publisher", "Publisher")
                         .WithMany("Authors")
-                        .HasForeignKey("PublisherId");
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Publisher");
                 });
 
             modelBuilder.Entity("BookAPI.Model.Book", b =>
@@ -110,15 +114,11 @@ namespace BookAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookAPI.Model.Publisher", "Publisher")
+                    b.HasOne("BookAPI.Model.Publisher", null)
                         .WithMany("Books")
-                        .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PublisherId");
 
                     b.Navigation("Author");
-
-                    b.Navigation("Publisher");
                 });
 
             modelBuilder.Entity("BookAPI.Model.Author", b =>

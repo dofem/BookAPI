@@ -21,7 +21,7 @@ namespace BookAPI.Controllers
                 _mapper = mapper;
             }
 
-            [HttpPost]
+            [HttpPost("CreateBook")]
             public async Task<ActionResult<ApiResponse>> CreateBook(CreateBook createBook)
             {
                 var errors = new List<string>();

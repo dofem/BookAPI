@@ -7,7 +7,7 @@ namespace BookAPI.Service.Interface
     {
         // other methods in the interface...
 
-        Task<IEnumerable<Author>> GetAuthorsAttachedToPublisher(int id);
+        Task<IEnumerable<Author>> GetAuthorsAttachedToPublisher(int publisherId);
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookAPI.Dto;
 using BookAPI.Model;
+using BookAPI.Service.Implementation;
 using BookAPI.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +13,16 @@ namespace BookAPI.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly IRepository<Author> _authorRepository;
+        private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
 
-        public AuthorController(IRepository<Author> authorRepository, IMapper mapper)
+        public AuthorController(IAuthorRepository authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
         }
 
         [HttpPost]
-        [Route("CreateAnAuthor")]
         public async Task<ActionResult<ApiResponse>> CreateAuthor(CreateAuthor createAuthor)
         {
             try
@@ -80,12 +80,11 @@ namespace BookAPI.Controllers
         {
             try
             {
-                var author = await _authorRepository.GetByIdAsync(id);
-                if (author == null)
+                var books = await _authorRepository.GetBooksAttachedToAuthor(id);
+                if (books == null)
                 {
                     return new ApiResponse { StatusCode = HttpStatusCode.NotFound, IsSuccess = false };
                 }
-                var books = author.Books.ToList();
                 var result = _mapper.Map<IEnumerable<CreateBook>>(books);
                 return new ApiResponse { StatusCode = HttpStatusCode.OK, IsSuccess = true, Result = result };
             }

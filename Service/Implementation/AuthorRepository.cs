@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookAPI.Service.Implementation
 {
-    public class AuthorRepository : IRepository<Author>
+    public class AuthorRepository : IAuthorRepository
     {
         private readonly ApplicationDbContext _dbContext;
        
@@ -32,18 +32,16 @@ namespace BookAPI.Service.Implementation
         public async Task AddAsync(Author entity)
         {
            
-            await _dbContext.Set<Author>().AddAsync(entity);
+            await _dbContext.Authors.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
         }
 
 
         public async Task<IEnumerable<Book>> GetBooksAttachedToAuthor(int authorId)
         {
-            var book = await _dbContext.Books
-                .Where(b => b.Id == authorId)
-                .ToListAsync();
+            var books = await _dbContext.Books.Where(b => b.AuthorId == authorId).ToListAsync();
             
-            return book;
+            return books;
         }
 
         //Task<IEnumerable<Author>> IRepository<Author>.GetAllAsync()
